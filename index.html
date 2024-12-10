@@ -20,9 +20,10 @@
   </style>
 </head>
 <body>
-  <h1>Click on the Image</h1>
+  <h1>Image annotation tool</h1>
+  <p>Please mark the artifacts !!! Attention this is a test, no data will be saved on this EXAMPLE image!!!</p>
   <div style="position: relative; display: inline-block;">
-    <img id="targetImage" src="https://d2exd72xrrp1s7.cloudfront.net/www/000/1k0/i1/i1pbkkb6eta18aqli69ljhgw1x1gbst4-uhi541480/0?width=500&height=315&crop=true&q=75" alt="Target Image">
+    <img id="targetImage" src="example.jpg" alt="Target Image">
  
     <div id="markerContainer"></div>
   </div>
@@ -92,6 +93,7 @@
     Telegram.WebApp.onEvent('main_button_pressed', () => {
       const positions = markers.map(marker => ({ x: marker.x, y: marker.y }));
       Telegram.WebApp.sendData(JSON.stringify(positions));
+      Telegram.WebApp.close();
     });
   </script>
   

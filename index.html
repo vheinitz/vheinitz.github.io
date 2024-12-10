@@ -1,4 +1,100 @@
-<b>Dipl. Ing.(FH), MBA Valentin Heinitz</b><br/>
-Wiesbaden/Ger<br/>
-Mobile: +49(0)160 950-39-758<br/>
-E-Mail:    vheinitz@gmail.com<br/>
+
+  
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Clicker with Marking</title>
+  <style>
+    body { text-align: center; margin: 20px; }
+    img { max-width: 100%; height: auto; cursor: pointer; position: relative; }
+    .marker {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border: 2px solid red;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Click on the Image</h1>
+  <div style="position: relative; display: inline-block;">
+    <img id="targetImage" src="https://d2exd72xrrp1s7.cloudfront.net/www/000/1k0/i1/i1pbkkb6eta18aqli69ljhgw1x1gbst4-uhi541480/0?width=500&height=315&crop=true&q=75" alt="Target Image">
+ 
+    <div id="markerContainer"></div>
+  </div>
+  <ul id="coordinatesList"></ul>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    const image = document.getElementById('targetImage');
+    const markerContainer = document.getElementById('markerContainer');
+    const coordinatesList = document.getElementById('coordinatesList');
+    const markers = []; // Store markers with positions
+
+    // Function to check if a position is within a marker
+    const isWithinMarker = (x, y, marker) => {
+      return (
+        x >= marker.x - 15 && x <= marker.x + 15 &&
+        y >= marker.y - 15 && y <= marker.y + 15
+      );
+    };
+
+    // Function to add a marker
+    const addMarker = (x, y) => {
+      const marker = document.createElement('div');
+      marker.classList.add('marker');
+      marker.style.left = `${x - 15}px`;
+      marker.style.top = `${y - 15}px`;
+      markerContainer.appendChild(marker);
+      markers.push({ x, y, element: marker });
+
+      const listItem = document.createElement('li');
+      listItem.textContent = `X: ${x}, Y: ${y}`;
+      listItem.dataset.index = markers.length - 1; // Link to marker index
+      coordinatesList.appendChild(listItem);
+    };
+
+    // Function to remove a marker
+    const removeMarker = (index) => {
+      const marker = markers[index];
+      if (marker) {
+        marker.element.remove();
+        markers.splice(index, 1);
+        // Remove corresponding list item
+        const listItem = coordinatesList.querySelector(`[data-index="${index}"]`);
+        if (listItem) listItem.remove();
+      }
+    };
+
+    image.addEventListener('click', (event) => {
+      const rect = image.getBoundingClientRect();
+      const x = event.clientX - rect.left; // X coordinate relative to the image
+      const y = event.clientY - rect.top;  // Y coordinate relative to the image
+
+      // Check if clicked within any existing marker
+      const existingMarkerIndex = markers.findIndex(marker => isWithinMarker(x, y, marker));
+
+      if (existingMarkerIndex !== -1) {
+        // Demark if clicked within an existing marker
+        removeMarker(existingMarkerIndex);
+      } else {
+        // Mark a new position
+        addMarker(x, y);
+      }
+    });
+
+    
+    Telegram.WebApp.MainButton.show();
+    // Optionally, send the coordinates back to the bot
+    Telegram.WebApp.onEvent('main_button_pressed', () => {
+      const positions = markers.map(marker => ({ x: marker.x, y: marker.y }));
+      Telegram.WebApp.sendData(JSON.stringify(positions));
+    });
+  </script>
+  
+</body>
+</html>
+

@@ -89,11 +89,20 @@
 
     
     Telegram.WebApp.MainButton.show();
-    // Optionally, send the coordinates back to the bot
+    Telegram.WebApp.MainButton.setText("Submit");
+    Telegram.WebApp.MainButton.enable();
+
+
     Telegram.WebApp.onEvent('main_button_pressed', () => {
       const positions = markers.map(marker => ({ x: marker.x, y: marker.y }));
       Telegram.WebApp.sendData(JSON.stringify(positions));
-      Telegram.WebApp.close();
+      Telegram.WebApp.MainButton.setText("Sending...");
+      Telegram.WebApp.MainButton.disable();
+
+      // Optionally, delay the closure for a better UX
+      setTimeout(() => {
+          Telegram.WebApp.close();
+      }, 1000); // Closes after 1 second
     });
   </script>
   

@@ -1,0 +1,10 @@
+title: vheinitz
+description: Notizen zu KI, Automatisierung und Software-Engineering
+theme: minima
+minima:
+  skin: auto
+show_excerpts: true
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+plugins:
+  - jekyll-feed
